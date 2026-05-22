@@ -38,7 +38,7 @@ async function sendMessage(){
  const input=document.getElementById("chatInput"); const message=input.value.trim(); if(!message)return;
  input.value=""; addChat("user",message); const typingId=addTyping();
  try{
-  const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message,profile,recentLogs:logs.slice(-20),chatHistory:chat.slice(-12)})});
+  const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message,profile,recentLogs:logs.slice(-3),chatHistory:chat.slice(-4)})});
   const data=await res.json(); removeTyping(typingId);
   if(!res.ok){addChat("ai","Gabim: "+(data.error||"Nuk u lidh dot me Gemini."));return}
   const foods=Array.isArray(data.foods)?data.foods:[], workouts=Array.isArray(data.workouts)?data.workouts:[];
