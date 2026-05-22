@@ -72,12 +72,76 @@ ${message}
     try {
       data = JSON.parse(response.text);
     } catch {
-      data = { reply: response.text, intent: "chat", foods: [], workouts: [] };
+      data = {
+        reply: response.text,
+        intent: "chat",
+        foods: [],
+        workouts: []
+      };
     }
 
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message || "Gabim nga Gemini" });
+  }
+});
+
+app.post("/api/report", async (req, res) => {
+  try {
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ error: "Mungon GEMINI_API_KEY ne .env" });
+    }
+
+    const { profile, logs } = req.body;
+
+    const prompt = `
+Ti je nje AI personal trainer shqiptar.
+
+Krijo nje raport personal per userin bazuar ne profilin dhe historikun e tij.
+
+Fol si trajner real, motivues dhe praktik.
+Mos fol si robot.
+Mos perdor JSON.
+Mos perdor markdown te rende.
+Shkruaj ne shqip.
+Mbaje raportin te qarte, te bukur dhe te lehte per t'u lexuar.
+
+Analizo:
+- konsistencen
+- ushqimin
+- proteinat
+- kaloritë
+- stervitjen
+- volume total
+- recovery
+- progresin
+- cfare duhet permiresuar
+- sugjerim konkret per javën tjetër
+
+Struktura:
+1. Permbledhje e shkurter
+2. Cfare ke bere mire
+3. Cfare duhet permiresuar
+4. Sugjerimi i trajnerit per javën tjetër
+5. Nje fjali motivuese ne fund
+
+Profili:
+${JSON.stringify(profile || {})}
+
+Historiku:
+${JSON.stringify(logs || [])}
+`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt
+    });
+
+    res.json({
+      report: response.text
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message || "Gabim ne raport" });
   }
 });
 
