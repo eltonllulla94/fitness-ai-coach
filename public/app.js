@@ -51,10 +51,55 @@ async function sendMessage(){
 function addTyping(){const id="typing-"+Date.now(),el=document.getElementById("chat"),div=document.createElement("div");div.id=id;div.className="bubble ai";div.textContent="Gemini po mendon...";el.appendChild(div);el.scrollTop=el.scrollHeight;return id}
 function removeTyping(id){const el=document.getElementById(id);if(el)el.remove()}
 function renderTotals(){
- const todayLogs=logs.filter(l=>l.date===today());
- const food=todayLogs.reduce((s,l)=>s+Number(l.totalFoodKcal||0),0),protein=todayLogs.reduce((s,l)=>s+Number(l.totalProtein||0),0),burn=todayLogs.reduce((s,l)=>s+Number(l.totalBurn||0),0),volume=todayLogs.reduce((s,l)=>s+Number(l.totalVolume||0),0);
- document.getElementById("todayFood").textContent=food+" kcal";document.getElementById("todayProtein").textContent=protein+"g proteinë";document.getElementById("todayBurn").textContent=burn+" kcal";
- document.getElementById("dailySummary").innerHTML=`<div><span>Ushqim</span><strong>${food} kcal</strong></div><div><span>Proteinë</span><strong>${protein}g</strong></div><div><span>Djegie</span><strong>${burn} kcal</strong></div><div><span>Volume</span><strong>${volume} kg</strong></div>`;
+
+ const todayLogs = logs.filter(l => l.date === today());
+
+ const food =
+  todayLogs.reduce((s,l)=>s+Number(l.totalFoodKcal||0),0);
+
+ const protein =
+  todayLogs.reduce((s,l)=>s+Number(l.totalProtein||0),0);
+
+ const burn =
+  todayLogs.reduce((s,l)=>s+Number(l.totalBurn||0),0);
+
+ const volume =
+  todayLogs.reduce((s,l)=>s+Number(l.totalVolume||0),0);
+
+ const bmr = Number(profile.bmr || 0);
+
+ const deficit = food - (bmr + burn);
+
+ document.getElementById("todayFood").textContent =
+  food + " kcal";
+
+ document.getElementById("todayProtein").textContent =
+  protein + "g proteinë";
+
+ document.getElementById("todayBurn").textContent =
+  burn + " kcal";
+
+ document.getElementById("dailySummary").innerHTML = `
+  <div>
+    <span>Ushqim</span>
+    <strong>${food} kcal</strong>
+  </div>
+
+  <div>
+    <span>BMR</span>
+    <strong>${bmr} kcal</strong>
+  </div>
+
+  <div>
+    <span>Stërvitje</span>
+    <strong>${burn} kcal</strong>
+  </div>
+
+  <div>
+    <span>${deficit >= 0 ? "Surplus" : "Deficit"}</span>
+    <strong>${deficit} kcal</strong>
+  </div>
+ `;
 }
 function renderLog(){
  const el=document.getElementById("log"),todayLogs=logs.filter(l=>l.date===today());
