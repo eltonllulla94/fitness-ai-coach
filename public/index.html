@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Personal Trainer Gemini</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Gemini AI Personal Trainer</p>
+        <h1>Chat i hapur me coach-in</h1>
+        <p class="muted">Ky version përdor Gemini API nga backend. Jo parser manual.</p>
+      </div>
+      <div class="score-grid">
+        <div class="score-card"><span>Djegie sot</span><strong id="todayBurn">0 kcal</strong><small>nga stërvitjet</small></div>
+        <div class="score-card"><span>Ushqim sot</span><strong id="todayFood">0 kcal</strong><small id="todayProtein">0g proteinë</small></div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card profile-card">
+        <h2>Profili</h2>
+        <label>Pesha trupore (kg)</label><input id="bodyWeight" type="number" value="80" />
+        <label>Gjatësia (cm)</label><input id="height" type="number" value="180" />
+        <label>Mosha</label><input id="age" type="number" value="25" />
+        <label>Gjinia</label>
+        <select id="gender"><option value="male">Mashkull</option><option value="female">Femër</option></select>
+        <button onclick="saveProfile()">Ruaj profilin</button>
+        <div class="result"><p>BMR: <strong id="bmr">-</strong></p><p>Maintenance: <strong id="tdee">-</strong></p></div>
+        <div class="hint">Shkruaj normalisht: “çkemi”, “kam ngrënë 5 qofte me pilaf”, “bench press 3x10 87.5kg”, “çfarë të bëj nesër?”</div>
+      </div>
+
+      <div class="card chat-card">
+        <h2>Chat me Gemini Coach</h2>
+        <div id="chat" class="chat"></div>
+        <textarea id="chatInput" placeholder="Shkruaj si në chat..."></textarea>
+        <div class="quick-examples">
+          <button class="ghost" onclick="exampleFood()">Shembull ushqim</button>
+          <button class="ghost" onclick="exampleWorkout()">Shembull stërvitje</button>
+        </div>
+        <button onclick="sendMessage()">Dërgo</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head"><h2>Log i sotëm</h2><button class="small danger" onclick="clearToday()">Fshi sot</button></div>
+      <div id="dailySummary" class="summary"></div>
+      <div id="log" class="log empty">Ende nuk ka log.</div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
