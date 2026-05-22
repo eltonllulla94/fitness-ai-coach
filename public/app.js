@@ -62,6 +62,40 @@ function renderLog(){
  el.className="log";el.innerHTML=todayLogs.slice().reverse().map(l=>`<div class="log-item"><div><strong>${l.message}</strong><p class="muted">${l.date}</p>${(l.foods||[]).map(f=>`<span class="tag">${f.name} · ${f.kcal||0} kcal · ${f.protein||0}g proteinë</span>`).join("")}${(l.workouts||[]).map(w=>`<span class="tag">${w.name} · ${w.burnKcal||0} kcal · volume ${w.volume||0}kg</span>`).join("")}</div><div><div class="food">+${l.totalFoodKcal||0}</div><div class="kcal">-${l.totalBurn||0}</div></div></div>`).join("");
 }
 function clearToday(){logs=logs.filter(l=>l.date!==today());saveData();renderAll()}
+async function generateReport() {
+  const reportBox = document.getElementById("reportBox");
+
+  if (!logs.length) {
+    reportBox.textContent = "Nuk ka ende mjaftueshëm të dhëna për raport.";
+    return;
+  }
+
+  reportBox.textContent = "AI po analizon progresin tënd...";
+
+  try {
+    const res = await fetch("/api/report", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        profile,
+        logs
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      reportBox.textContent = "Gabim: " + (data.error || "Raporti nuk u gjenerua.");
+      return;
+    }
+
+    reportBox.textContent = data.report || "Raporti nuk u gjenerua.";
+  } catch (err) {
+    reportBox.textContent = "Nuk u lidh dot me AI për raportin.";
+  }
+}
 function renderAll(){renderChat();renderTotals();renderLog()}
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.ctrlKey||e.metaKey))sendMessage()});
 loadProfile();renderAll();
